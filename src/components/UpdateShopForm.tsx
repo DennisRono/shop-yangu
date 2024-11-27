@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
@@ -7,58 +6,47 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { Product } from '@/interfaces'
+import { Shop } from '@/interfaces'
 import { Loader2 } from 'lucide-react'
 
-interface UpdateProductFormProps {
-  product: Product
+interface UpdateShopFormProps {
+  shop: Shop
   onClose: () => void
-  onSubmit: (product: Product) => Promise<void>
+  onSubmit: (shop: Shop) => Promise<void>
 }
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required('Product name is required'),
-  price: Yup.number()
-    .positive('Price must be positive')
-    .required('Price is required'),
-  stock_level: Yup.number()
-    .integer('Stock level must be an integer')
-    .min(0, 'Stock level must be non-negative')
-    .required('Stock level is required'),
+  name: Yup.string().required('Shop name is required'),
   description: Yup.string().required('Description is required'),
-  image: Yup.string().url('Invalid URL').required('Image URL is required'),
+  logo: Yup.string().url('Invalid URL').required('Logo URL is required'),
 })
 
-export function UpdateProductForm({
-  product,
+export function UpdateShopForm({
+  shop,
   onClose,
   onSubmit,
-}: UpdateProductFormProps) {
+}: UpdateShopFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const formik = useFormik({
     initialValues: {
-      name: product.name,
-      price: product.price.toString(),
-      stock_level: product.stock_level.toString(),
-      description: product.description,
-      image: product.image,
+      name: shop.name,
+      description: shop.description,
+      logo: shop.logo,
     },
     validationSchema,
     onSubmit: async (values) => {
       setIsSubmitting(true)
       try {
         await onSubmit({
-          ...product,
+          ...shop,
           name: values.name,
-          price: parseFloat(values.price),
-          stock_level: parseInt(values.stock_level),
           description: values.description,
-          image: values.image,
+          logo: values.logo,
         })
         onClose()
       } catch (error) {
-        console.error('Error updating product:', error)
+        console.error('Error updating shop:', error)
       } finally {
         setIsSubmitting(false)
       }
@@ -68,7 +56,7 @@ export function UpdateProductForm({
   return (
     <form onSubmit={formik.handleSubmit} className="space-y-4">
       <div>
-        <Label htmlFor="name">Product Name</Label>
+        <Label htmlFor="name">Shop Name</Label>
         <Input
           id="name"
           name="name"
@@ -78,35 +66,6 @@ export function UpdateProductForm({
         />
         {formik.touched.name && formik.errors.name && (
           <div className="text-red-500">{formik.errors.name}</div>
-        )}
-      </div>
-      <div>
-        <Label htmlFor="price">Price</Label>
-        <Input
-          id="price"
-          name="price"
-          type="number"
-          step="0.01"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.price}
-        />
-        {formik.touched.price && formik.errors.price && (
-          <div className="text-red-500">{formik.errors.price}</div>
-        )}
-      </div>
-      <div>
-        <Label htmlFor="stock_level">Stock Level</Label>
-        <Input
-          id="stock_level"
-          name="stock_level"
-          type="number"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.stock_level}
-        />
-        {formik.touched.stock_level && formik.errors.stock_level && (
-          <div className="text-red-500">{formik.errors.stock_level}</div>
         )}
       </div>
       <div>
@@ -123,16 +82,16 @@ export function UpdateProductForm({
         )}
       </div>
       <div>
-        <Label htmlFor="image">Image URL</Label>
+        <Label htmlFor="logo">Logo URL</Label>
         <Input
-          id="image"
-          name="image"
+          id="logo"
+          name="logo"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          value={formik.values.image}
+          value={formik.values.logo}
         />
-        {formik.touched.image && formik.errors.image && (
-          <div className="text-red-500">{formik.errors.image}</div>
+        {formik.touched.logo && formik.errors.logo && (
+          <div className="text-red-500">{formik.errors.logo}</div>
         )}
       </div>
       <div className="flex justify-end space-x-2">
@@ -143,7 +102,7 @@ export function UpdateProductForm({
           {isSubmitting ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           ) : null}
-          Update Product
+          Update Shop
         </Button>
       </div>
     </form>

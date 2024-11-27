@@ -8,37 +8,37 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import NewProduct from '@/components/NewProduct'
-import { Product } from '@/interfaces'
-import { ProductTable } from '@/components/ProductTable'
-import { UpdateProductForm } from '@/components/UpdateProductForm'
-import { DeleteProductConfirmation } from '@/components/DeleteProductConfirmation'
+import { Shop } from '@/interfaces'
+import { ShopTable } from '@/components/ShopTable'
+import { UpdateShopForm } from '@/components/UpdateShopForm'
+import { DeleteShopConfirmation } from '@/components/DeleteShopConfirmation'
 import { api } from '@/lib/api'
 import { useToast } from '@/hooks/use-toast'
+import NewShop from '@/components/NewShop'
 
 export default function ShopList() {
-  const [products, setProducts] = useState<Product[]>([])
+  const [shops, setShops] = useState<Shop[]>([])
   const [searchTerm, setSearchTerm] = useState('')
-  const [sortBy, setSortBy] = useState<keyof Product>('name')
+  const [sortBy, setSortBy] = useState<keyof Shop>('name')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [currentPage, setCurrentPage] = useState(1)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [selectedShop, setSelectedShop] = useState<Shop | null>(null)
   const { toast } = useToast()
 
   useEffect(() => {
-    fetchProducts()
+    fetchShops()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const fetchProducts = async () => {
+  const fetchShops = async () => {
     try {
       const res: any = await api('GET', 'shops')
       const data = await res.json()
       if (res.ok) {
-        setProducts(data)
+        setShops(data)
       } else {
         throw new Error(data.message)
       }
@@ -51,11 +51,11 @@ export default function ShopList() {
     }
   }
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredShops = shops.filter((shop) =>
+    shop.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
+  const sortedShops = [...filteredShops].sort((a, b) => {
     const aValue = a[sortBy] ?? ''
     const bValue = b[sortBy] ?? ''
 
@@ -65,13 +65,13 @@ export default function ShopList() {
   })
 
   const itemsPerPage = 10
-  const totalPages = Math.ceil(sortedProducts.length / itemsPerPage)
-  const paginatedProducts = sortedProducts.slice(
+  const totalPages = Math.ceil(sortedShops.length / itemsPerPage)
+  const paginatedShops = sortedShops.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   )
 
-  const handleSort = (column: keyof Product) => {
+  const handleSort = (column: keyof Shop) => {
     if (column === sortBy) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
     } else {
@@ -80,41 +80,26 @@ export default function ShopList() {
     }
   }
 
-  const handleUpdate = (product: Product) => {
-    setSelectedProduct(product)
+  const handleUpdate = (shop: Shop) => {
+    setSelectedShop(shop)
     setIsUpdateModalOpen(true)
   }
 
-  const handleDelete = (product: Product) => {
-    setSelectedProduct(product)
+  const handleDelete = (shop: Shop) => {
+    setSelectedShop(shop)
     setIsDeleteModalOpen(true)
   }
 
-  const handleCreateProduct = async (newProduct: Omit<Product, 'id'>) => {
+  const handleUpdateShop = async (updatedShop: Shop) => {
     try {
-      const res: any = await api('POST', 'products', newProduct)
+      const res: any = await api(
+        'PATCH',
+        `shops/${updatedShop._id}`,
+        updatedShop
+      )
       const data = await res.json()
       if (res.ok) {
-        fetchProducts()
-        setIsCreateModalOpen(false)
-      } else {
-        throw new Error(data.message)
-      }
-    } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      })
-    }
-  }
-
-  const handleUpdateProduct = async (updatedProduct: Product) => {
-    try {
-      const res: any = await api('PATCH', 'products', updatedProduct)
-      const data = await res.json()
-      if (res.ok) {
-        fetchProducts()
+        fetchShops()
         setIsUpdateModalOpen(false)
       } else {
         throw new Error(data.message)
@@ -128,12 +113,12 @@ export default function ShopList() {
     }
   }
 
-  const handleDeleteProduct = async (productId: string) => {
+  const handleDeleteShop = async (shopId: string) => {
     try {
-      const res: any = await api('DELETE', `products/${productId}`)
+      const res: any = await api('DELETE', `shops/${shopId}`)
       const data = await res.json()
       if (res.ok) {
-        fetchProducts()
+        fetchShops()
         setIsDeleteModalOpen(false)
       } else {
         throw new Error(data.message)
@@ -161,14 +146,14 @@ export default function ShopList() {
         </div>
         <Input
           type="text"
-          placeholder="Search products..."
+          placeholder="Search shops..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full md:w-64 border !border-black"
         />
       </div>
-      <ProductTable
-        products={paginatedProducts}
+      <ShopTable
+        shops={paginatedShops}
         onSort={handleSort}
         sortBy={sortBy}
         sortOrder={sortOrder}
@@ -198,25 +183,22 @@ export default function ShopList() {
       <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add New Product</DialogTitle>
+            <DialogTitle>Add New Shop</DialogTitle>
           </DialogHeader>
-          <NewProduct
-            onClose={() => setIsCreateModalOpen(false)}
-            onSubmit={handleCreateProduct}
-          />
+          <NewShop />
         </DialogContent>
       </Dialog>
 
       <Dialog open={isUpdateModalOpen} onOpenChange={setIsUpdateModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Update Product</DialogTitle>
+            <DialogTitle>Update Shop</DialogTitle>
           </DialogHeader>
-          {selectedProduct && (
-            <UpdateProductForm
-              product={selectedProduct}
+          {selectedShop && (
+            <UpdateShopForm
+              shop={selectedShop}
               onClose={() => setIsUpdateModalOpen(false)}
-              onSubmit={handleUpdateProduct}
+              onSubmit={handleUpdateShop}
             />
           )}
         </DialogContent>
@@ -225,13 +207,13 @@ export default function ShopList() {
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Product</DialogTitle>
+            <DialogTitle>Delete Shop</DialogTitle>
           </DialogHeader>
-          {selectedProduct && (
-            <DeleteProductConfirmation
-              product={selectedProduct}
+          {selectedShop && (
+            <DeleteShopConfirmation
+              shop={selectedShop}
               onClose={() => setIsDeleteModalOpen(false)}
-              onConfirm={() => handleDeleteProduct(selectedProduct._id)}
+              onConfirm={() => handleDeleteShop(selectedShop._id)}
             />
           )}
         </DialogContent>

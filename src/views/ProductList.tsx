@@ -31,7 +31,7 @@ export default function ProductListingPage() {
   useEffect(() => {
     fetchProducts()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [isCreateModalOpen, isUpdateModalOpen, isDeleteModalOpen])
 
   const fetchProducts = async () => {
     try {
@@ -88,25 +88,6 @@ export default function ProductListingPage() {
   const handleDelete = (product: Product) => {
     setSelectedProduct(product)
     setIsDeleteModalOpen(true)
-  }
-
-  const handleCreateProduct = async (newProduct: Omit<Product, 'id'>) => {
-    try {
-      const res: any = await api('POST', 'products', newProduct)
-      const data = await res.json()
-      if (res.ok) {
-        fetchProducts()
-        setIsCreateModalOpen(false)
-      } else {
-        throw new Error(data.message)
-      }
-    } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      })
-    }
   }
 
   const handleUpdateProduct = async (updatedProduct: Product) => {
@@ -201,8 +182,9 @@ export default function ProductListingPage() {
             <DialogTitle>Add New Product</DialogTitle>
           </DialogHeader>
           <NewProduct
-            onClose={() => setIsCreateModalOpen(false)}
-            onSubmit={handleCreateProduct}
+            onClose={() => {
+              setIsCreateModalOpen(false)
+            }}
           />
         </DialogContent>
       </Dialog>
@@ -215,7 +197,9 @@ export default function ProductListingPage() {
           {selectedProduct && (
             <UpdateProductForm
               product={selectedProduct}
-              onClose={() => setIsUpdateModalOpen(false)}
+              onClose={() => {
+                setIsCreateModalOpen(false)
+              }}
               onSubmit={handleUpdateProduct}
             />
           )}

@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import { useFormik } from 'formik'
 import { Button } from '@/components/ui/button'
@@ -9,14 +8,16 @@ import { Textarea } from '@/components/ui/textarea'
 import { Loader2 } from 'lucide-react'
 import { newProductSchema } from '@/schemas/yup/newproduct'
 import { Product } from '@/interfaces'
+import { api } from '@/lib/api'
+import { useToast } from '@/hooks/use-toast'
 
 interface NewProductProps {
   onClose: () => void
-  onSubmit: (product: Omit<Product, 'id'>) => Promise<void>
 }
 
-const NewProduct: React.FC<NewProductProps> = ({ onClose, onSubmit }) => {
+const NewProduct: React.FC<NewProductProps> = ({ onClose }) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { toast } = useToast()
 
   const formik = useFormik({
     initialValues: {
@@ -31,8 +32,21 @@ const NewProduct: React.FC<NewProductProps> = ({ onClose, onSubmit }) => {
     onSubmit: async (values) => {
       setIsSubmitting(true)
       try {
-        await onSubmit(values as Omit<Product, 'id'>)
-        onClose()
+        try {
+          const res: any = await api('POST', 'products', values)
+          const data = await res.json()
+          if (res.ok) {
+            onClose()
+          } else {
+            throw new Error(data.message)
+          }
+        } catch (error: any) {
+          toast({
+            title: 'Error',
+            description: error.message,
+            variant: 'destructive',
+          })
+        }
       } catch (error) {
         console.error('Error submitting product:', error)
       } finally {
