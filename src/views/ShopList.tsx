@@ -113,9 +113,9 @@ export default function ShopList() {
     }
   }
 
-  const handleDeleteShop = async (shopId: string) => {
+  const handleDeleteShop = async (shop_id: string) => {
     try {
-      const res: any = await api('DELETE', `shops/${shopId}`)
+      const res: any = await api('DELETE', `shops/${shop_id}`)
       const data = await res.json()
       if (res.ok) {
         fetchShops()
