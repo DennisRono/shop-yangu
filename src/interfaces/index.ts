@@ -6,13 +6,21 @@ export interface Shop {
 }
 
 export interface Product {
-  id: string
-  shopId: string
+  _id: string
   name: string
   price: number
-  stockLevel: number
+  stock_level: number
   description: string
-  image: string
+  image: string[]
+  shop?: {
+    _id: string
+    name: string
+    description: string
+    logo: string
+    createdAt: string
+    updatedAt: string
+    __v: number
+  }
 }
 
 export interface DashboardMetrics {
@@ -31,5 +39,5 @@ export interface StockStatus {
 export interface TopShop {
   id: string
   name: string
-  stockLevel: number
+  stock_level: number
 }

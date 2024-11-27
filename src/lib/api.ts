@@ -1,8 +1,3 @@
-interface ErrorWithJson extends Error {
-  json: () => Promise<{ message?: string }>
-  status?: number
-}
-
 export const api = async (
   method = 'GET',
   slug = '',
@@ -22,7 +17,7 @@ export const api = async (
       config.body = JSON.stringify(data)
     }
 
-    const url = `${process.env.BACKEND_URL}/api/${slug}`
+    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/${slug}`
     const response = await fetch(url, config)
     return response
   } catch (error: unknown) {
@@ -73,4 +68,9 @@ function isErrorWithJson(error: unknown): error is ErrorWithJson {
     'json' in error &&
     typeof (error as ErrorWithJson).json === 'function'
   )
+}
+
+interface ErrorWithJson extends Error {
+  json: () => Promise<{ message?: string }>
+  status?: number
 }
