@@ -6,10 +6,11 @@ import CustomError from '@/lib/CustomError'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const params = await props.params
+    const id: string = params.id
     const { newShopId } = await request.json()
 
     if (!id || !newShopId) {
