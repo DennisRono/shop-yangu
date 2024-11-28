@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useFormik } from 'formik'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -7,33 +7,75 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Loader2 } from 'lucide-react'
 import { newProductSchema } from '@/schemas/yup/newproduct'
-import { Product } from '@/interfaces'
 import { api } from '@/lib/api'
 import { useToast } from '@/hooks/use-toast'
+import FileUpload from './FileUpload'
+import { useAppSelector } from '@/store/hooks'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 interface NewProductProps {
   onClose: () => void
 }
+interface Shop {
+  _id: string
+  name: string
+  description: string
+}
 
 const NewProduct: React.FC<NewProductProps> = ({ onClose }) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [shops, setShops] = useState<Shop[]>([])
+  const user = useAppSelector((state: any) => state.identity.user)
   const { toast } = useToast()
+
+  useEffect(() => {
+    const fetchShops = async () => {
+      try {
+        const res: any = await api('GET', 'shops')
+        const data = await res.json()
+        if (res.ok) {
+          setShops(data)
+        } else {
+          throw new Error(data.message)
+        }
+      } catch (error: any) {
+        toast({
+          title: 'Error',
+          description: `Failed to fetch shops: ${error.message}`,
+          variant: 'destructive',
+        })
+      }
+    }
+
+    fetchShops()
+  }, [toast])
 
   const formik = useFormik({
     initialValues: {
       name: '',
-      shop_id: '',
+      shop_id: '67472dad652af0316c1368ce',
       price: '',
       stock_level: '',
       description: '',
-      image: null,
+      images: [] as string[],
+      thumbnail: null as number | null,
     },
     validationSchema: newProductSchema,
     onSubmit: async (values) => {
+      console.log(values)
       setIsSubmitting(true)
       try {
         try {
-          const res: any = await api('POST', 'products', values)
+          const res: any = await api('POST', 'products', {
+            ...values,
+            thumbnail: values.images[values.thumbnail || 0],
+          })
           const data = await res.json()
           if (res.ok) {
             onClose()
@@ -60,6 +102,32 @@ const NewProduct: React.FC<NewProductProps> = ({ onClose }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <Label htmlFor="shop_id">Shop</Label>
+        <Select
+          name="shop_id"
+          value={values.shop_id}
+          onValueChange={(value) => setFieldValue('shop_id', value)}
+        >
+          <SelectTrigger
+            className={
+              errors.shop_id && touched.shop_id ? 'border-red-500' : ''
+            }
+          >
+            <SelectValue placeholder="Select a shop" />
+          </SelectTrigger>
+          <SelectContent>
+            {shops.map((shop) => (
+              <SelectItem key={shop._id} value={shop._id}>
+                {shop.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {touched.shop_id && errors.shop_id && (
+          <p className="text-red-500 text-sm mt-1">{errors.shop_id}</p>
+        )}
+      </div>
       <div>
         <Label htmlFor="name">Product Name</Label>
         <Input
@@ -121,18 +189,16 @@ const NewProduct: React.FC<NewProductProps> = ({ onClose }) => {
         )}
       </div>
       <div>
-        <Label htmlFor="image">Image</Label>
-        <Input
-          id="image"
-          name="image"
-          type="file"
-          onChange={(e) =>
-            setFieldValue('image', e.currentTarget.files?.[0] || null)
-          }
-          className={errors.image && touched.image ? 'border-red-500' : ''}
+        <Label>Product Images</Label>
+        <FileUpload
+          images={values.images}
+          setImages={(images) => setFieldValue('images', images)}
+          thumbnail={values.thumbnail}
+          setThumbnail={(index) => setFieldValue('thumbnail', index)}
+          userId={user.user_id}
         />
-        {touched.image && errors.image && (
-          <p className="text-red-500 text-sm mt-1">{errors.image}</p>
+        {touched.images && errors.images && (
+          <p className="text-red-500 text-sm mt-1">{errors.images}</p>
         )}
       </div>
       <div className="flex justify-end space-x-2">

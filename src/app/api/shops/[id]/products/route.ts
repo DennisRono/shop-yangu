@@ -3,35 +3,18 @@ import { NextRequest, NextResponse } from 'next/server'
 import CustomError from '@/lib/CustomError'
 import connectDB from '@/config/database_connection'
 import Product from '@/schemas/mongoose/ProductsSchema'
+import { ObjectId } from 'mongodb'
 
-export async function POST(request: NextRequest) {
+export async function GET(
+  request: NextRequest,
+  props: { params: Promise<{ id: string }> }
+) {
   try {
-    const data = await request.json()
-    console.log(data)
-    const isConnected = await connectDB()
-    if (!isConnected) {
-      throw new CustomError('Failed to connect to database', 500)
+    const params = await props.params
+    const id: string = params.id
+    if (!id) {
+      throw new CustomError('no id in URL', 500)
     }
-    const newProduct = new Product(data)
-    await newProduct.save()
-    return NextResponse.json(
-      { message: 'Product added successfully!', product: newProduct },
-      { status: 201 }
-    )
-  } catch (error: any) {
-    if (error.name === 'ValidationError') {
-      return NextResponse.json({ message: error.message }, { status: 400 })
-    }
-    const statusCode = error instanceof CustomError ? error.statusCode : 500
-    return NextResponse.json(
-      { message: error.message || 'An unexpected error occurred' },
-      { status: statusCode }
-    )
-  }
-}
-
-export async function GET(request: NextRequest) {
-  try {
     const isConnected = await connectDB()
     if (!isConnected) {
       throw new CustomError('Failed to connect to database', 500)
@@ -39,9 +22,14 @@ export async function GET(request: NextRequest) {
 
     const products = await Product.aggregate([
       {
+        $match: {
+          shop_id: new ObjectId(id),
+        },
+      },
+      {
         $lookup: {
           from: 'shops',
-          localField: 'shop',
+          localField: 'shop_id',
           foreignField: '_id',
           as: 'shop',
         },
@@ -53,6 +41,7 @@ export async function GET(request: NextRequest) {
         },
       },
     ])
+
     return NextResponse.json(products)
   } catch (error: any) {
     if (error.name === 'ValidationError') {

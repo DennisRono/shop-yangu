@@ -1,22 +1,66 @@
 import mongoose, { Schema, Document } from 'mongoose'
 
 export interface IProduct extends Document {
-  shop: Schema.Types.ObjectId
+  shop_id: Schema.Types.ObjectId
   name: string
   price: number
   stock_level: number
   description: string
-  image: string | string[]
+  images: string[]
+  thumbnail: string
 }
 
 const ProductSchema: Schema = new Schema<IProduct>(
   {
-    shop: { type: Schema.Types.ObjectId, ref: 'Shop', required: true },
-    name: { type: String, required: true },
-    price: { type: Number, required: true },
-    stock_level: { type: Number, required: true },
-    description: { type: String, required: true },
-    image: { type: Schema.Types.Mixed, required: true },
+    shop_id: { type: Schema.Types.ObjectId, ref: 'Shop', required: true },
+    name: { type: String, required: true, trim: true },
+    price: {
+      type: Number,
+      required: true,
+      min: [0, 'Price must be a positive value.'],
+    },
+    stock_level: {
+      type: Number,
+      required: true,
+      min: [0, 'Stock level cannot be negative.'],
+      validate: {
+        validator: Number.isInteger,
+        message: '{VALUE} is not an integer value for stock_level',
+      },
+    },
+    description: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: [10, 'Description must be at least 10 characters long.'],
+    },
+    images: {
+      type: [String],
+      required: true,
+      validate: [
+        {
+          validator: (array: string[]) => array.length >= 1,
+          message: 'At least one product image is required.',
+        },
+        {
+          validator: (array: string[]) => array.length <= 20,
+          message: 'Maximum of 20 images allowed.',
+        },
+      ],
+    },
+    thumbnail: {
+      type: String,
+      required: true,
+      validate: {
+        validator: function (value: string) {
+          if (Array.isArray(this.images)) {
+            return this.images.includes(value)
+          }
+          return true
+        },
+        message: 'Thumbnail must be one of the product images.',
+      },
+    },
   },
   { timestamps: true }
 )

@@ -97,7 +97,12 @@ export default function ProductListingPage() {
 
   const handleUpdateProduct = async (updatedProduct: Product) => {
     try {
-      const res: any = await api('PATCH', 'products', updatedProduct)
+      const { _id, __v, createdAt, updatedAt, ...updprod } = updatedProduct
+      const res: any = await api(
+        'PATCH',
+        `products/${updatedProduct._id}`,
+        updprod
+      )
       const data = await res.json()
       if (res.ok) {
         fetchProducts()

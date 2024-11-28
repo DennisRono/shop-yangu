@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import CustomError from '@/lib/CustomError'
 import connectDB from '@/config/database_connection'
 import Shop from '@/schemas/mongoose/ShopsSchema'
+import Product from '@/schemas/mongoose/ProductsSchema'
 
 export async function DELETE(
   request: NextRequest,
@@ -12,12 +13,27 @@ export async function DELETE(
     const params = await props.params
     const id: string = params.id
     if (!id) {
-      throw new CustomError('no id in URL', 500)
+      throw new CustomError('No id in URL', 400)
     }
+
     const isConnected = await connectDB()
     if (!isConnected) {
       throw new CustomError('Failed to connect to database', 500)
     }
+
+    const productsCount = await Product.countDocuments({ shop_id: id })
+    if (productsCount > 0) {
+      return NextResponse.json(
+        {
+          message: 'Cannot delete shop with active products',
+          action:
+            'Please remove or reassign all products before deleting this shop.',
+          productsCount,
+        },
+        { status: 400 }
+      )
+    }
+
     const deletedShop = await Shop.findByIdAndDelete(id)
     if (!deletedShop) {
       throw new CustomError('Shop not found', 404)

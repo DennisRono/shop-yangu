@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import {
   Table,
   TableBody,
@@ -37,6 +36,7 @@ export function ProductTable({
             Product Name{' '}
             {sortBy === 'name' && (sortOrder === 'asc' ? '▲' : '▼')}
           </TableHead>
+          <TableHead>Description</TableHead>
           <TableHead onClick={() => onSort('price')} className="cursor-pointer">
             Price {sortBy === 'price' && (sortOrder === 'asc' ? '▲' : '▼')}
           </TableHead>
@@ -56,11 +56,12 @@ export function ProductTable({
           <TableRow key={product._id}>
             <TableCell>{i + 1}</TableCell>
             <TableCell>{product.name}</TableCell>
+            <TableCell>{product.description}</TableCell>
             <TableCell>Ksh. {product.price}</TableCell>
             <TableCell>{product.stock_level}</TableCell>
             <TableCell>
-              {product.image?.[0] && (
-                <CImage logo={product.image[0]} name={product.name} />
+              {product.thumbnail && (
+                <CImage logo={product.thumbnail} name={product.name} />
               )}
             </TableCell>
             <TableCell>

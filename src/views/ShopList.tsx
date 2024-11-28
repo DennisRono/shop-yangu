@@ -119,22 +119,8 @@ export default function ShopList() {
   }
 
   const handleDeleteShop = async (shop_id: string) => {
-    try {
-      const res: any = await api('DELETE', `shops/${shop_id}`)
-      const data = await res.json()
-      if (res.ok) {
-        fetchShops()
-        setIsDeleteModalOpen(false)
-      } else {
-        throw new Error(data.message)
-      }
-    } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      })
-    }
+    fetchShops()
+    setIsDeleteModalOpen(false)
   }
 
   return (
