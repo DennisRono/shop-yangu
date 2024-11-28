@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Shop } from '@/interfaces'
+import CImage from './CustomImage'
 
 interface ShopTableProps {
   shops: Shop[]
@@ -47,15 +48,7 @@ export function ShopTable({
             <TableCell>{shop.name}</TableCell>
             <TableCell>{shop.description}</TableCell>
             <TableCell>
-              {shop.logo && (
-                <Image
-                  src={shop.logo}
-                  alt={shop.name}
-                  width={50}
-                  height={50}
-                  className="object-cover"
-                />
-              )}
+              {shop.logo && <CImage logo={shop.logo} name={shop.name} />}
             </TableCell>
             <TableCell>
               <div className="flex items-center justify-center">

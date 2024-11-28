@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Product } from '@/interfaces'
+import CImage from './CustomImage'
 
 interface ProductTableProps {
   products: Product[]
@@ -59,13 +60,7 @@ export function ProductTable({
             <TableCell>{product.stock_level}</TableCell>
             <TableCell>
               {product.image?.[0] && (
-                <Image
-                  src={product.image[0]}
-                  alt={product.name}
-                  width={50}
-                  height={50}
-                  className="object-cover"
-                />
+                <CImage logo={product.image[0]} name={product.name} />
               )}
             </TableCell>
             <TableCell>
