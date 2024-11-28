@@ -187,7 +187,7 @@ export default function ProductListingPage() {
   }
 
   const handlePriceRangeChange = (value: any) => {
-    handleFilterChange('priceRange', [0, parseInt(value, 10)])
+    handleFilterChange('priceRange', [0, value])
   }
 
   return (
@@ -235,11 +235,7 @@ export default function ProductListingPage() {
             <h2 className="font-semibold text-sm ml-1">Price Range</h2>
             <input
               type="range"
-              min={
-                findMinAndMax(
-                  products.map((prod: any) => parseInt(prod.price))
-                )[0]
-              }
+              min={0}
               max={
                 findMinAndMax(
                   products.map((prod: any) => parseInt(prod.price))
@@ -272,10 +268,7 @@ export default function ProductListingPage() {
               step="1"
               value={filters.stockRange[1]}
               onChange={(e) =>
-                handleFilterChange('stockRange', [
-                  0,
-                  parseInt(e.target.value, 10),
-                ])
+                handleFilterChange('stockRange', [0, e.target.value])
               }
               className="w-full"
             />
