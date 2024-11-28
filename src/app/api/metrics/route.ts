@@ -73,6 +73,8 @@ export async function GET(request: NextRequest) {
         ]),
       ])
 
+    console.log(topShops)
+
     const metrics = {
       totalShops,
       totalProducts,
@@ -83,7 +85,7 @@ export async function GET(request: NextRequest) {
         count: status.count,
       })),
       topShops: topShops.map((shop) => ({
-        shopName: shop.shop.name,
+        shopName: shop.shop?.name || 'deleted shop',
         totalStock: shop.totalStock,
       })),
     }

@@ -100,8 +100,6 @@ const NewProduct: React.FC<NewProductProps> = ({ onClose }) => {
   const { errors, touched, values, handleChange, handleSubmit, setFieldValue } =
     formik
 
-  console.log(values)
-
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
