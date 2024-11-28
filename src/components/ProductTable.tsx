@@ -42,7 +42,7 @@ export function ProductTable({
           </TableHead>
           <TableHead
             onClick={() => onSort('stock_level')}
-            className="cursor-pointer"
+            className="cursor-pointer text-center"
           >
             Stock Level{' '}
             {sortBy === 'stock_level' && (sortOrder === 'asc' ? '▲' : '▼')}
@@ -58,7 +58,22 @@ export function ProductTable({
             <TableCell>{product.name}</TableCell>
             <TableCell>{product.description}</TableCell>
             <TableCell>Ksh. {product.price}</TableCell>
-            <TableCell>{product.stock_level}</TableCell>
+            <TableCell>
+              <div className="flex items-center gap-2 justify-center">
+                <span>{product.stock_level}</span>
+                <span
+                  className={`px-2 py-1 rounded-full text-xs ${getStatusColor(
+                    product.stock_level
+                  )}`}
+                >
+                  {product.stock_level > 5
+                    ? 'in stock'
+                    : product.stock_level === 0
+                    ? 'out of stock'
+                    : 'low stock'}
+                </span>
+              </div>
+            </TableCell>
             <TableCell>
               {product.thumbnail && (
                 <CImage logo={product.thumbnail} name={product.name} />
@@ -79,4 +94,14 @@ export function ProductTable({
       </TableBody>
     </Table>
   )
+}
+
+const getStatusColor = (stock: number) => {
+  if (stock > 5) {
+    return `bg-green-200 text-green-800`
+  } else if (stock === 0) {
+    return `bg-red-100 text-red-800`
+  } else {
+    return `bg-yellow-100 text-yellow-800`
+  }
 }
