@@ -16,7 +16,7 @@ export const uploadToCloudinary = async (
         invalidate: true,
         resource_type: 'auto',
         filename_override: fileName,
-        folder: 'nullcommerce/' + folder,
+        folder: 'shopyangu/' + folder,
         use_filename: true,
         eager: [
           {
