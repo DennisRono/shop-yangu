@@ -3,16 +3,10 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { setTab } from '@/store/slices/tabSlice'
 import {
   Home,
-  Plus,
   ShoppingBag,
-  Package,
   ChevronLeft,
   ChevronRight,
   Store,
-  PlusSquare,
-  Search,
-  BarChart2,
-  Award,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -29,10 +23,6 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded, setExpanded }) => {
     { name: 'Dashboard', icon: Home, key: 'dashboard' },
     { name: 'Shops', icon: Store, key: 'shops' },
     { name: 'Products', icon: ShoppingBag, key: 'products' },
-    { name: 'Search & Filter', icon: Search, key: 'search-filter' },
-    { name: 'Overview Metrics', icon: BarChart2, key: 'overview-metrics' },
-    { name: 'Stock Status', icon: Package, key: 'stock-status' },
-    { name: 'Top Shops', icon: Award, key: 'top-shops' },
   ]
 
   return (

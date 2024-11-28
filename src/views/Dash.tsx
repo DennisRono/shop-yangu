@@ -12,12 +12,23 @@ import {
   ResponsiveContainer,
   XAxis,
   YAxis,
+  Tooltip,
+  Legend,
 } from 'recharts'
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const Dash = () => {
   const [metrics, setMetrics] = useState({
@@ -28,7 +39,7 @@ const Dash = () => {
     stockDistribution: [],
     topShops: [],
   })
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const { toast } = useToast()
 
   const fetchMetrics = async () => {
@@ -70,8 +81,8 @@ const Dash = () => {
 
   return (
     <div className="space-y-8">
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        <Card>
+      <div className="flex flex-wrap gap-4">
+        <Card className="flex-1 min-w-[200px]">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Shops</CardTitle>
           </CardHeader>
@@ -79,7 +90,7 @@ const Dash = () => {
             <div className="text-2xl font-bold">{metrics.totalShops}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="flex-1 min-w-[200px]">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Total Products
@@ -89,7 +100,7 @@ const Dash = () => {
             <div className="text-2xl font-bold">{metrics.totalProducts}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="flex-1 min-w-[200px]">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Value</CardTitle>
           </CardHeader>
@@ -99,7 +110,7 @@ const Dash = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="flex-1 min-w-[200px]">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Stock</CardTitle>
           </CardHeader>
@@ -109,12 +120,12 @@ const Dash = () => {
         </Card>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <Card>
+      <div className="flex flex-wrap gap-4 my-4 w-full">
+        <Card className="flex-1 min-w-[200px] w-1/2">
           <CardHeader>
             <CardTitle>Stock Distribution</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0 sm:p-6">
             <ChartContainer
               config={{
                 count: {
@@ -122,10 +133,13 @@ const Dash = () => {
                   color: 'hsl(var(--chart-1))',
                 },
               }}
-              className="h-[300px]"
+              className="h-[300px] w-full"
             >
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={metrics.stockDistribution}>
+                <BarChart
+                  data={metrics.stockDistribution}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
                   <XAxis dataKey="status" />
                   <YAxis />
                   <ChartTooltip content={<ChartTooltipContent />} />
@@ -136,11 +150,11 @@ const Dash = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="flex-1 min-w-[200px] w-1/2">
           <CardHeader>
             <CardTitle>Top Shops by Stock</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0 sm:p-6">
             <ChartContainer
               config={{
                 totalStock: {
@@ -148,10 +162,13 @@ const Dash = () => {
                   color: 'hsl(var(--chart-2))',
                 },
               }}
-              className="h-[300px]"
+              className="h-[300px] w-full"
             >
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={metrics.topShops}>
+                <LineChart
+                  data={metrics.topShops}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
                   <XAxis dataKey="shopName" />
                   <YAxis />
                   <ChartTooltip content={<ChartTooltipContent />} />
@@ -166,6 +183,30 @@ const Dash = () => {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Top Shops</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Shop Name</TableHead>
+                <TableHead>Total Stock</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {metrics.topShops.map((shop: any, index) => (
+                <TableRow key={index}>
+                  <TableCell>{shop.shopName}</TableCell>
+                  <TableCell>{shop.totalStock}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   )
 }
@@ -173,59 +214,50 @@ const Dash = () => {
 export default Dash
 
 const DashLoader = () => (
-  <div className="min-h-screen bg-gray-100 px-4 py-8">
-    <div className="container mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        {Array(4)
-          .fill(0)
-          .map((_, index) => (
-            <div
-              key={index}
-              className="bg-gray-300 h-24 rounded-lg animate-pulse"
-            ></div>
-          ))}
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <div className="bg-gray-300 h-64 rounded-lg animate-pulse"></div>
-        <div className="bg-gray-300 h-64 rounded-lg animate-pulse"></div>
-      </div>
-
-      <div className="mt-4 bg-gray-300 rounded-lg p-6 animate-pulse">
-        <div className="h-6 w-1/4 bg-gray-400 rounded mb-4 animate-pulse"></div>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr>
-                {Array(4)
-                  .fill(0)
-                  .map((_, index) => (
-                    <th
-                      key={index}
-                      className="h-4 bg-gray-400 rounded w-1/6 animate-pulse"
-                    ></th>
-                  ))}
-              </tr>
-            </thead>
-            <tbody>
-              {Array(5)
-                .fill(0)
-                .map((_, rowIndex) => (
-                  <tr key={rowIndex} className="border-b">
-                    {Array(4)
-                      .fill(0)
-                      .map((_, colIndex) => (
-                        <td
-                          key={colIndex}
-                          className="py-2 bg-gray-300 h-4 rounded animate-pulse"
-                        ></td>
-                      ))}
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+  <div className="space-y-8">
+    <div className="flex flex-wrap gap-4">
+      {Array(4)
+        .fill(0)
+        .map((_, index) => (
+          <Card key={index} className="flex-1 min-w-[200px]">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <Skeleton className="h-4 w-[100px]" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-8 w-[80px]" />
+            </CardContent>
+          </Card>
+        ))}
     </div>
+
+    <div className="flex flex-wrap gap-4">
+      {Array(2)
+        .fill(0)
+        .map((_, index) => (
+          <Card key={index} className="flex-1 min-w-[300px]">
+            <CardHeader>
+              <Skeleton className="h-6 w-[150px]" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-[300px] w-full" />
+            </CardContent>
+          </Card>
+        ))}
+    </div>
+
+    <Card>
+      <CardHeader>
+        <Skeleton className="h-6 w-[100px]" />
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-full" />
+        </div>
+      </CardContent>
+    </Card>
   </div>
 )

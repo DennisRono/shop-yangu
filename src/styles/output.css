@@ -618,6 +618,40 @@ body {
   color: hsl(var(--foreground));
 }
 
+.container {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1536px;
+  }
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -727,8 +761,17 @@ body {
   margin-bottom: 0.25rem;
 }
 
+.my-4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
 .mb-4 {
   margin-bottom: 1rem;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
 }
 
 .ml-auto {
@@ -811,6 +854,10 @@ body {
   height: 1.25rem;
 }
 
+.h-6 {
+  height: 1.5rem;
+}
+
 .h-8 {
   height: 2rem;
 }
@@ -839,6 +886,26 @@ body {
   height: 1px;
 }
 
+.h-\[calc\(100vh-56px\)\] {
+  height: calc(100vh - 56px);
+}
+
+.h-\[calc\(100vh-55px\)\] {
+  height: calc(100vh - 55px);
+}
+
+.h-\[calc\(100vh-52px\)\] {
+  height: calc(100vh - 52px);
+}
+
+.h-\[calc\(100vh-50px\)\] {
+  height: calc(100vh - 50px);
+}
+
+.h-16 {
+  height: 4rem;
+}
+
 .max-h-96 {
   max-height: 24rem;
 }
@@ -861,6 +928,10 @@ body {
 
 .w-1 {
   width: 0.25rem;
+}
+
+.w-1\/2 {
+  width: 50%;
 }
 
 .w-10 {
@@ -915,12 +986,32 @@ body {
   width: 2.25rem;
 }
 
+.w-\[100px\] {
+  width: 100px;
+}
+
+.w-\[150px\] {
+  width: 150px;
+}
+
 .w-\[300px\] {
   width: 300px;
 }
 
+.w-\[80px\] {
+  width: 80px;
+}
+
 .w-full {
   width: 100%;
+}
+
+.min-w-\[200px\] {
+  min-width: 200px;
+}
+
+.min-w-\[300px\] {
+  min-width: 300px;
 }
 
 .min-w-\[8rem\] {
@@ -1003,6 +1094,10 @@ body {
           user-select: none;
 }
 
+.flex-row {
+  flex-direction: row;
+}
+
 .flex-col {
   flex-direction: column;
 }
@@ -1075,6 +1170,12 @@ body {
   margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
+.space-y-0 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0px * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0px * var(--tw-space-y-reverse));
+}
+
 .space-y-1 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
@@ -1097,6 +1198,12 @@ body {
   --tw-space-y-reverse: 0;
   margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+}
+
+.space-y-8 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(2rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(2rem * var(--tw-space-y-reverse));
 }
 
 .overflow-auto {
@@ -1173,6 +1280,11 @@ body {
 
 .border-dashed {
   border-style: dashed;
+}
+
+.\!border-black {
+  --tw-border-opacity: 1 !important;
+  border-color: rgb(0 0 0 / var(--tw-border-opacity, 1)) !important;
 }
 
 .border-\[--color-border\] {
@@ -1303,6 +1415,10 @@ body {
      object-fit: cover;
 }
 
+.p-0 {
+  padding: 0px;
+}
+
 .p-1 {
   padding: 0.25rem;
 }
@@ -1371,6 +1487,15 @@ body {
   padding-bottom: 0.5rem;
 }
 
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.pb-2 {
+  padding-bottom: 0.5rem;
+}
+
 .pb-3 {
   padding-bottom: 0.75rem;
 }
@@ -1417,6 +1542,16 @@ body {
 
 .font-mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-4xl {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
 }
 
 .text-base {
@@ -2039,6 +2174,16 @@ body {
   }
 }
 
+.dark\:bg-\[\#242424\]:is(.dark *) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(36 36 36 / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-black:is(.dark *) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));
+}
+
 @media (min-width: 640px) {
   .sm\:bottom-0 {
     bottom: 0px;
@@ -2078,6 +2223,10 @@ body {
     border-radius: var(--radius);
   }
 
+  .sm\:p-6 {
+    padding: 1.5rem;
+  }
+
   .sm\:text-left {
     text-align: left;
   }
@@ -2088,12 +2237,20 @@ body {
 }
 
 @media (min-width: 768px) {
+  .md\:mb-0 {
+    margin-bottom: 0px;
+  }
+
   .md\:block {
     display: block;
   }
 
   .md\:hidden {
     display: none;
+  }
+
+  .md\:w-64 {
+    width: 16rem;
   }
 
   .md\:max-w-\[420px\] {

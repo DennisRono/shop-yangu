@@ -31,7 +31,7 @@ const Playarea = () => {
     }
   }
   return (
-    <div className="h-[calc(100vh-64px)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-900 scrollbar-track-transparent">
+    <div className="h-[calc(100vh-56px)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-900 scrollbar-track-transparent dark:bg-[#242424]">
       <div className="p-4 max-w-7xl mx-auto">{renderContent()}</div>
     </div>
   )

@@ -19,7 +19,7 @@ const Header = () => {
   const { theme, toggleTheme } = useTheme()
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="h-14 sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:bg-black">
       <div className="flex h-14 items-center justify-between mx-4">
         <div className="flex items-center space-x-4">
           <Link href="/" className="flex items-center space-x-2">
