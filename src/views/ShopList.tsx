@@ -15,6 +15,7 @@ import { DeleteShopConfirmation } from '@/components/DeleteShopConfirmation'
 import { api } from '@/lib/api'
 import { useToast } from '@/hooks/use-toast'
 import NewShop from '@/components/NewShop'
+import SkeletonLoader from '@/components/SkeletonLoader'
 
 export default function ShopList() {
   const [shops, setShops] = useState<Shop[]>([])
@@ -22,6 +23,7 @@ export default function ShopList() {
   const [sortBy, setSortBy] = useState<keyof Shop>('name')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [currentPage, setCurrentPage] = useState(1)
+  const [loading, setIsLoading] = useState(false)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
@@ -35,6 +37,7 @@ export default function ShopList() {
 
   const fetchShops = async () => {
     try {
+      setIsLoading(true)
       const res: any = await api('GET', 'shops')
       const data = await res.json()
       if (res.ok) {
@@ -48,6 +51,8 @@ export default function ShopList() {
         description: error.message,
         variant: 'destructive',
       })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -152,14 +157,19 @@ export default function ShopList() {
           className="w-full md:w-64 border !border-black"
         />
       </div>
-      <ShopTable
-        shops={paginatedShops}
-        onSort={handleSort}
-        sortBy={sortBy}
-        sortOrder={sortOrder}
-        onUpdate={handleUpdate}
-        onDelete={handleDelete}
-      />
+      {loading ? (
+        <SkeletonLoader />
+      ) : (
+        <ShopTable
+          shops={paginatedShops}
+          onSort={handleSort}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          onUpdate={handleUpdate}
+          onDelete={handleDelete}
+        />
+      )}
+
       <div className="mt-4 flex justify-between items-center">
         <Button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}

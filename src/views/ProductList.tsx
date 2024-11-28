@@ -15,6 +15,7 @@ import { UpdateProductForm } from '@/components/UpdateProductForm'
 import { DeleteProductConfirmation } from '@/components/DeleteProductConfirmation'
 import { api } from '@/lib/api'
 import { useToast } from '@/hooks/use-toast'
+import SkeletonLoader from '@/components/SkeletonLoader'
 
 export default function ProductListingPage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -22,6 +23,7 @@ export default function ProductListingPage() {
   const [sortBy, setSortBy] = useState<keyof Product>('name')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [currentPage, setCurrentPage] = useState(1)
+  const [loading, setIsLoading] = useState(false)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
@@ -35,6 +37,7 @@ export default function ProductListingPage() {
 
   const fetchProducts = async () => {
     try {
+      setIsLoading(true)
       const res: any = await api('GET', 'products')
       const data = await res.json()
       if (res.ok) {
@@ -48,6 +51,8 @@ export default function ProductListingPage() {
         description: error.message,
         variant: 'destructive',
       })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -148,14 +153,19 @@ export default function ProductListingPage() {
           className="w-full md:w-64 border !border-black"
         />
       </div>
-      <ProductTable
-        products={paginatedProducts}
-        onSort={handleSort}
-        sortBy={sortBy}
-        sortOrder={sortOrder}
-        onUpdate={handleUpdate}
-        onDelete={handleDelete}
-      />
+      {loading ? (
+        <SkeletonLoader />
+      ) : (
+        <ProductTable
+          products={paginatedProducts}
+          onSort={handleSort}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          onUpdate={handleUpdate}
+          onDelete={handleDelete}
+        />
+      )}
+
       <div className="mt-4 flex justify-between items-center">
         <Button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
