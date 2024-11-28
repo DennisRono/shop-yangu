@@ -33,7 +33,7 @@ export default function ShopList() {
   useEffect(() => {
     fetchShops()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [isCreateModalOpen, isUpdateModalOpen, isDeleteModalOpen])
 
   const fetchShops = async () => {
     try {
@@ -181,7 +181,7 @@ export default function ShopList() {
           <DialogHeader>
             <DialogTitle>Add New Shop</DialogTitle>
           </DialogHeader>
-          <NewShop />
+          <NewShop onClose={setIsCreateModalOpen} />
         </DialogContent>
       </Dialog>
 
