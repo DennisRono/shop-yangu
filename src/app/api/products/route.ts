@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
       {
         $lookup: {
           from: 'shops',
-          localField: 'shop',
+          localField: 'shop_id',
           foreignField: '_id',
           as: 'shop',
         },

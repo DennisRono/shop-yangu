@@ -1,103 +1,125 @@
 'use client'
-import React from 'react'
-import { Formik, Form, Field, ErrorMessage } from 'formik'
+import { useState } from 'react'
+import { useFormik } from 'formik'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { newShopSchema } from '@/schemas/yup/newshop'
-import { useToast } from '@/hooks/use-toast'
-import { api } from '@/lib/api'
 import { Loader2 } from 'lucide-react'
+import { newShopSchema } from '@/schemas/yup/newshop'
+import { api } from '@/lib/api'
+import { useToast } from '@/hooks/use-toast'
+import FileUpload from './FileUpload'
+import { useAppSelector } from '@/store/hooks'
 
-const NewShop = () => {
+const NewShop = ({ onClose }: { onClose: (value: any) => void }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const user = useAppSelector((state: any) => state.identity.user)
   const { toast } = useToast()
-  const handleSubmit = async (values: any, { setSubmitting }: any) => {
-    try {
-      const res: any = await api('POST', `shops`, values)
-      const data = await res.json()
-      if (res.ok) {
-        setSubmitting(false)
-      } else {
-        throw new Error(data.message)
+
+  const formik = useFormik({
+    initialValues: {
+      shopName: '',
+      shopDescription: '',
+      images: [] as string[],
+      logo: null as number | null,
+    },
+    validationSchema: newShopSchema,
+    onSubmit: async (values) => {
+      setIsSubmitting(true)
+      try {
+        const res: any = await api('POST', 'shops', {
+          name: values.shopName,
+          description: values.shopDescription,
+          logo: values.images[values.logo || 0],
+        })
+        const data = await res.json()
+        if (res.ok) {
+          onClose(false)
+        } else {
+          throw new Error(data.message)
+        }
+      } catch (error: any) {
+        toast({
+          title: 'Error',
+          description: error.message,
+          variant: 'destructive',
+        })
+      } finally {
+        setIsSubmitting(false)
       }
-    } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      })
-    }
-  }
+    },
+  })
+
+  const { errors, touched, values, handleChange, handleSubmit, setFieldValue } =
+    formik
+
+  console.log(values)
 
   return (
-    <div className="mx-auto w-full h-full">
-      <Formik
-        initialValues={{ shopName: '', shopDescription: '', shopLogo: null }}
-        validationSchema={newShopSchema}
-        onSubmit={handleSubmit}
-      >
-        {({ isSubmitting, setFieldValue }) => (
-          <Form>
-            <div className="space-y-2">
-              <Label htmlFor="shopName">Shop Name</Label>
-              <Field
-                as={Input}
-                id="shopName"
-                name="shopName"
-                type="text"
-                placeholder="Enter shop name"
-              />
-              <ErrorMessage
-                name="shopName"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="shopDescription">Shop Description</Label>
-              <Field
-                as={Textarea}
-                id="shopDescription"
-                name="shopDescription"
-                placeholder="Enter shop description"
-              />
-              <ErrorMessage
-                name="shopDescription"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-
-            <div className="space-y-2 mb-4">
-              <Label htmlFor="shopLogo">Shop Logo</Label>
-              <Input
-                id="shopLogo"
-                name="shopLogo"
-                type="file"
-                accept="image/*"
-                onChange={(event) => {
-                  setFieldValue('shopLogo', event.currentTarget.files?.[0])
-                }}
-              />
-              <ErrorMessage
-                name="shopLogo"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-
-            <Button type="submit" disabled={isSubmitting} className="w-full">
-              {isSubmitting ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : null}
-              {isSubmitting ? 'Creating...' : 'Create Shop'}
-            </Button>
-          </Form>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <Label htmlFor="shopName">Shop Name</Label>
+        <Input
+          id="shopName"
+          name="shopName"
+          value={values.shopName}
+          onChange={handleChange}
+          placeholder="Enter shop name"
+          className={
+            errors.shopName && touched.shopName ? 'border-red-500' : ''
+          }
+        />
+        {touched.shopName && errors.shopName && (
+          <p className="text-red-500 text-sm mt-1">{errors.shopName}</p>
         )}
-      </Formik>
-    </div>
+      </div>
+
+      <div>
+        <Label htmlFor="shopDescription">Shop Description</Label>
+        <Textarea
+          id="shopDescription"
+          name="shopDescription"
+          value={values.shopDescription}
+          onChange={handleChange}
+          placeholder="Enter shop description"
+          className={
+            errors.shopDescription && touched.shopDescription
+              ? 'border-red-500'
+              : ''
+          }
+        />
+        {touched.shopDescription && errors.shopDescription && (
+          <p className="text-red-500 text-sm mt-1">{errors.shopDescription}</p>
+        )}
+      </div>
+
+      <div>
+        <Label>Shop Logo</Label>
+        <FileUpload
+          images={values.images}
+          setImages={(images) => setFieldValue('images', images)}
+          thumbnail={values.logo}
+          setThumbnail={(index) => setFieldValue('logo', index)}
+          userId={user.user_id}
+        />
+        {touched.images && errors.images && (
+          <p className="text-red-500 text-sm mt-1">{errors.images}</p>
+        )}
+      </div>
+
+      <div className="flex justify-end space-x-2">
+        <Button variant="outline" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : null}
+          {isSubmitting ? 'Creating...' : 'Create Shop'}
+        </Button>
+      </div>
+    </form>
   )
 }
 

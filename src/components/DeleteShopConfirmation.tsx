@@ -53,7 +53,6 @@ export function DeleteShopConfirmation({
 
         const productsData = await productsResponse.json()
         const shopsData = await shopsResponse.json()
-        console.log(productsData, shopsData)
 
         setProducts(productsData)
         setOtherShops(shopsData.filter((s: Shop) => s._id !== shop._id))
@@ -95,7 +94,7 @@ export function DeleteShopConfirmation({
     if (products.length === 0) {
       try {
         setIsDeleting(true)
-        const res: any = api('DELETE', `shop/${shop._id}`)
+        const res: any = await api('DELETE', `shops/${shop._id}`)
         const data = await res.json()
         if (res.ok) {
           toast({
@@ -179,7 +178,10 @@ export function DeleteShopConfirmation({
           ) : (
             <Button
               variant="destructive"
-              onClick={() => onConfirm(shop)}
+              onClick={() => {
+                deleteShop()
+                onConfirm(shop)
+              }}
               disabled={isLoading && deleting}
             >
               {deleting ? (

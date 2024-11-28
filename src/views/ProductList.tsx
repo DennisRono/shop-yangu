@@ -16,10 +16,17 @@ import { DeleteProductConfirmation } from '@/components/DeleteProductConfirmatio
 import { api } from '@/lib/api'
 import { useToast } from '@/hooks/use-toast'
 import SkeletonLoader from '@/components/SkeletonLoader'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 export default function ProductListingPage() {
   const [products, setProducts] = useState<Product[]>([])
-  const [searchTerm, setSearchTerm] = useState('')
+  const [shops, setShops] = useState<any[]>([])
   const [sortBy, setSortBy] = useState<keyof Product>('name')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [currentPage, setCurrentPage] = useState(1)
@@ -28,12 +35,31 @@ export default function ProductListingPage() {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [filters, setFilters] = useState({
+    shop: 'all',
+    priceRange: [0, 20000],
+    stockRange: [0, 20000],
+    search: '',
+  })
   const { toast } = useToast()
 
   useEffect(() => {
     fetchProducts()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCreateModalOpen, isUpdateModalOpen, isDeleteModalOpen])
+
+  useEffect(() => {
+    setFilters({
+      ...filters,
+      priceRange: findMinAndMax(
+        products.map((prod: any) => parseInt(prod.price))
+      ),
+      stockRange: findMinAndMax(
+        products.map((prod: any) => parseInt(prod.stock_level))
+      ),
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [products])
 
   const fetchProducts = async () => {
     try {
@@ -42,6 +68,7 @@ export default function ProductListingPage() {
       const data = await res.json()
       if (res.ok) {
         setProducts(data)
+        setShops(data.map((i: any) => i.shop))
       } else {
         throw new Error(data.message)
       }
@@ -56,9 +83,20 @@ export default function ProductListingPage() {
     }
   }
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredProducts = products.filter((product: any) => {
+    const matchesSearch = product.name
+      ?.toLowerCase()
+      .includes(filters.search.toLowerCase())
+    const withinPriceRange =
+      product.price >= filters.priceRange[0] &&
+      product.price <= filters.priceRange[1]
+    const withinStockRange =
+      product.stock_level >= filters.stockRange[0] &&
+      product.stock_level <= filters.stockRange[1]
+    const matchesShop =
+      filters.shop === 'all' || product.shop?._id === filters.shop
+    return matchesSearch && withinPriceRange && withinStockRange && matchesShop
+  })
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     const aValue = a[sortBy] ?? ''
@@ -138,6 +176,20 @@ export default function ProductListingPage() {
     }
   }
 
+  const findMinAndMax = (arr: number[]) => {
+    if (arr.length === 0) return [0, 20000]
+    return [Math.min(...arr), Math.max(...arr)]
+  }
+
+  const handleFilterChange = (filterType: string, value: any) => {
+    setFilters((prev) => ({ ...prev, [filterType]: value }))
+    setCurrentPage(1)
+  }
+
+  const handlePriceRangeChange = (value: any) => {
+    handleFilterChange('priceRange', [0, parseInt(value, 10)])
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-6">Product Management</h1>
@@ -150,13 +202,89 @@ export default function ProductListingPage() {
             Add New Product
           </Button>
         </div>
-        <Input
-          type="text"
-          placeholder="Search products..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full md:w-64 border !border-black"
-        />
+        <div className="flex items-center gap-4">
+          <Input
+            type="text"
+            placeholder="Search products..."
+            value={filters.search}
+            onChange={(e) => handleFilterChange('search', e.target.value)}
+            className="w-full md:w-64 border !border-black"
+          />
+          <div className="w-[200px]">
+            <Select
+              name="shop_id"
+              value={filters.shop}
+              onValueChange={(value: any) => {
+                handleFilterChange('shop', value)
+              }}
+            >
+              <SelectTrigger className="border border-black">
+                <SelectValue placeholder="Select a shop" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Select a Shop</SelectItem>
+                {shops.map((shop: any, i) => (
+                  <SelectItem key={i} value={shop._id}>
+                    {shop.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex-1">
+            <h2 className="font-semibold text-sm ml-1">Price Range</h2>
+            <input
+              type="range"
+              min={
+                findMinAndMax(
+                  products.map((prod: any) => parseInt(prod.price))
+                )[0]
+              }
+              max={
+                findMinAndMax(
+                  products.map((prod: any) => parseInt(prod.price))
+                )[1]
+              }
+              step="10"
+              value={filters.priceRange[1]}
+              onChange={(e) => handlePriceRangeChange(e.target.value)}
+              className="w-full"
+            />
+            <div className="flex justify-between -mt-1">
+              <span className="text-xs">{0}</span>
+              <span className="text-xs">{filters.priceRange[1]}</span>
+            </div>
+          </div>
+          <div className="flex-1">
+            <h2 className="font-semibold text-sm ml-1">Stock Range</h2>
+            <input
+              type="range"
+              min={
+                findMinAndMax(
+                  products.map((prod: any) => parseInt(prod.stock_level))
+                )[0]
+              }
+              max={
+                findMinAndMax(
+                  products.map((prod: any) => parseInt(prod.stock_level))
+                )[1]
+              }
+              step="1"
+              value={filters.stockRange[1]}
+              onChange={(e) =>
+                handleFilterChange('stockRange', [
+                  0,
+                  parseInt(e.target.value, 10),
+                ])
+              }
+              className="w-full"
+            />
+            <div className="flex justify-between -mt-1">
+              <span className="text-xs">{0}</span>
+              <span className="text-xs">{filters.stockRange[1]}</span>
+            </div>
+          </div>
+        </div>
       </div>
       {loading ? (
         <SkeletonLoader />

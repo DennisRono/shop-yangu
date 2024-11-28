@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
         Product.aggregate([
           {
             $group: {
-              _id: '$shop',
+              _id: '$shop_id',
               totalStock: { $sum: '$stock_level' },
             },
           },
@@ -65,15 +65,19 @@ export async function GET(request: NextRequest) {
             },
           },
           {
+            $unwind: {
+              path: '$shopDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
             $project: {
-              shop: { $arrayElemAt: ['$shopDetails', 0] },
+              shop: '$shopDetails',
               totalStock: 1,
             },
           },
         ]),
       ])
-
-    console.log(topShops)
 
     const metrics = {
       totalShops,
