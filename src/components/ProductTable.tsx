@@ -59,8 +59,8 @@ export function ProductTable({
             <TableCell>Ksh. {product.price}</TableCell>
             <TableCell>{product.stock_level}</TableCell>
             <TableCell>
-              {product.image?.[0] && (
-                <CImage logo={product.image[0]} name={product.name} />
+              {product.thumbnail && (
+                <CImage logo={product.thumbnail} name={product.name} />
               )}
             </TableCell>
             <TableCell>

@@ -12,6 +12,7 @@ export interface Product {
   stock_level: number
   description: string
   image: string[]
+  thumbnail: string
   shop?: {
     _id: string
     name: string

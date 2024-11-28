@@ -7,6 +7,7 @@ import Product from '@/schemas/mongoose/ProductsSchema'
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json()
+    console.log(data)
     const isConnected = await connectDB()
     if (!isConnected) {
       throw new CustomError('Failed to connect to database', 500)
