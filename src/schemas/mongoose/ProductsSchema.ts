@@ -52,8 +52,11 @@ const ProductSchema: Schema = new Schema<IProduct>(
       type: String,
       required: true,
       validate: {
-        validator: function (this: IProduct, value: string) {
-          return this.images.includes(value)
+        validator: function (value: string) {
+          if (Array.isArray(this.images)) {
+            return this.images.includes(value)
+          }
+          return true
         },
         message: 'Thumbnail must be one of the product images.',
       },

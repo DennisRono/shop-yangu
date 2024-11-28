@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Product } from '@/interfaces'
 import { Loader2 } from 'lucide-react'
+import FileUpload from './FileUpload'
+import { useAppSelector } from '@/store/hooks'
 
 interface UpdateProductFormProps {
   product: Product
@@ -17,7 +19,7 @@ interface UpdateProductFormProps {
 }
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required('Product name is required'),
+  name: Yup.string().required('Product name is required').trim(),
   price: Yup.number()
     .positive('Price must be positive')
     .required('Price is required'),
@@ -25,8 +27,27 @@ const validationSchema = Yup.object().shape({
     .integer('Stock level must be an integer')
     .min(0, 'Stock level must be non-negative')
     .required('Stock level is required'),
-  description: Yup.string().required('Description is required'),
-  image: Yup.string().url('Invalid URL').required('Image URL is required'),
+  description: Yup.string()
+    .required('Description is required')
+    .min(10, 'Description must be at least 10 characters long')
+    .trim(),
+  images: Yup.array()
+    .of(Yup.string().url('Invalid image URL'))
+    .min(1, 'At least one product image is required')
+    .max(20, 'Maximum of 20 images allowed'),
+  thumbnail: Yup.number()
+    .nullable()
+    .test(
+      'valid-thumbnail',
+      'Invalid thumbnail selection',
+      function (value: any) {
+        const { images } = this.parent
+        return (
+          value === null ||
+          (Number.isInteger(value) && value >= 0 && value < images.length)
+        )
+      }
+    ),
 })
 
 export function UpdateProductForm({
@@ -35,6 +56,7 @@ export function UpdateProductForm({
   onSubmit,
 }: UpdateProductFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const user = useAppSelector((state: any) => state.identity.user)
 
   const formik = useFormik({
     initialValues: {
@@ -42,7 +64,8 @@ export function UpdateProductForm({
       price: product.price.toString(),
       stock_level: product.stock_level.toString(),
       description: product.description,
-      image: product.image,
+      images: product.images,
+      thumbnail: 0,
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -54,7 +77,8 @@ export function UpdateProductForm({
           price: parseFloat(values.price),
           stock_level: parseInt(values.stock_level),
           description: values.description,
-          image: values.image,
+          images: values.images,
+          thumbnail: values.images[values.thumbnail || 0],
         })
         onClose()
       } catch (error) {
@@ -66,7 +90,7 @@ export function UpdateProductForm({
   })
 
   return (
-    <form onSubmit={formik.handleSubmit} className="space-y-4">
+    <form onSubmit={formik.handleSubmit} className="space-y-6">
       <div>
         <Label htmlFor="name">Product Name</Label>
         <Input
@@ -77,7 +101,7 @@ export function UpdateProductForm({
           value={formik.values.name}
         />
         {formik.touched.name && formik.errors.name && (
-          <div className="text-red-500">{formik.errors.name}</div>
+          <div className="text-red-500 text-sm mt-1">{formik.errors.name}</div>
         )}
       </div>
       <div>
@@ -92,7 +116,7 @@ export function UpdateProductForm({
           value={formik.values.price}
         />
         {formik.touched.price && formik.errors.price && (
-          <div className="text-red-500">{formik.errors.price}</div>
+          <div className="text-red-500 text-sm mt-1">{formik.errors.price}</div>
         )}
       </div>
       <div>
@@ -106,7 +130,9 @@ export function UpdateProductForm({
           value={formik.values.stock_level}
         />
         {formik.touched.stock_level && formik.errors.stock_level && (
-          <div className="text-red-500">{formik.errors.stock_level}</div>
+          <div className="text-red-500 text-sm mt-1">
+            {formik.errors.stock_level}
+          </div>
         )}
       </div>
       <div>
@@ -119,20 +145,24 @@ export function UpdateProductForm({
           value={formik.values.description}
         />
         {formik.touched.description && formik.errors.description && (
-          <div className="text-red-500">{formik.errors.description}</div>
+          <div className="text-red-500 text-sm mt-1">
+            {formik.errors.description}
+          </div>
         )}
       </div>
       <div>
-        <Label htmlFor="image">Image URL</Label>
-        <Input
-          id="image"
-          name="image"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.image}
+        <Label>Product Images</Label>
+        <FileUpload
+          images={formik.values.images}
+          setImages={(images) => formik.setFieldValue('images', images)}
+          thumbnail={formik.values.thumbnail}
+          setThumbnail={(index) => formik.setFieldValue('thumbnail', index)}
+          userId={user.user_id}
         />
-        {formik.touched.image && formik.errors.image && (
-          <div className="text-red-500">{formik.errors.image}</div>
+        {formik.touched.images && formik.errors.images && (
+          <div className="text-red-500 text-sm mt-1">
+            {formik.errors.images}
+          </div>
         )}
       </div>
       <div className="flex justify-end space-x-2">

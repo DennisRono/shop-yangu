@@ -1,6 +1,5 @@
 'use client'
-
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useDropzone, Accept, FileRejection } from 'react-dropzone'
 import { toast } from '@/hooks/use-toast'
 import ImageUpload from '@/lib/ImageUpload'
@@ -92,6 +91,12 @@ const FileUpload: React.FC<FileUploadProps> = ({
       setThumbnail(thumbnail - 1)
     }
   }
+
+  useEffect(() => {
+    console.log(typeof images)
+    console.log(images)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [images])
 
   return (
     <div className="space-y-4">

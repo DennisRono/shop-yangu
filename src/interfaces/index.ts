@@ -11,7 +11,7 @@ export interface Product {
   price: number
   stock_level: number
   description: string
-  image: string[]
+  images: string[]
   thumbnail: string
   shop?: {
     _id: string
@@ -22,6 +22,9 @@ export interface Product {
     updatedAt: string
     __v: number
   }
+  createdAt: string
+  updatedAt: string
+  __v: number
 }
 
 export interface DashboardMetrics {
