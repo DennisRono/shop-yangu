@@ -255,11 +255,7 @@ export default function ProductListingPage() {
             <h2 className="font-semibold text-sm ml-1">Stock Range</h2>
             <input
               type="range"
-              min={
-                findMinAndMax(
-                  products.map((prod: any) => parseInt(prod.stock_level))
-                )[0]
-              }
+              min={0}
               max={
                 findMinAndMax(
                   products.map((prod: any) => parseInt(prod.stock_level))
