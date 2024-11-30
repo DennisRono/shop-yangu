@@ -1,11 +1,10 @@
-import Image from 'next/image'
 import { useState } from 'react'
 
 const CImage = ({ logo, name }: { logo: string; name: string }) => {
   const [imgSrc, setImgSrc] = useState(logo)
 
   return (
-    <Image
+    <img
       src={imgSrc}
       alt={name}
       width={50}
