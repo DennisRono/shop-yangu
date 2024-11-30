@@ -68,7 +68,16 @@ export default function ProductListingPage() {
       const data = await res.json()
       if (res.ok) {
         setProducts(data)
-        setShops(data.map((i: any) => i.shop))
+        const allshops = data.map((product: any) => product.shop)
+        setShops(
+          Array.from(
+            new Set(
+              allshops
+                .filter((shop: any) => shop && shop._id)
+                .map((shop: any) => shop._id)
+            )
+          ).map((id) => allshops.find((shop: any) => shop._id === id))
+        )
       } else {
         throw new Error(data.message)
       }
