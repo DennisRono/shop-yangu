@@ -55,14 +55,20 @@ export function ProductTable({
         {products.map((product, i) => (
           <TableRow key={product._id}>
             <TableCell>{i + 1}</TableCell>
-            <TableCell>{product.name}</TableCell>
-            <TableCell>{product.description}</TableCell>
-            <TableCell>Ksh. {product.price}</TableCell>
+            <TableCell className="overflow-ellipsis line-clamp-3">
+              {product.name}
+            </TableCell>
+            <TableCell className="overflow-ellipsis line-clamp-3">
+              {product.description}
+            </TableCell>
+            <TableCell className="whitespace-nowrap">
+              Ksh. {product.price}
+            </TableCell>
             <TableCell>
               <div className="flex items-center gap-2 justify-center">
                 <span>{product.stock_level}</span>
                 <span
-                  className={`px-2 py-1 rounded-full text-xs ${getStatusColor(
+                  className={`px-2 py-1 rounded-full whitespace-nowrap text-xs ${getStatusColor(
                     product.stock_level
                   )}`}
                 >
