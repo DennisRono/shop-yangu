@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import Image from 'next/image'
+import { useState } from 'react'
 
 const CImage = ({ logo, name }: { logo: string; name: string }) => {
   const [imgSrc, setImgSrc] = useState(logo)
@@ -14,7 +14,7 @@ const CImage = ({ logo, name }: { logo: string; name: string }) => {
       height={50}
       className="object-cover"
       onError={() => {
-        setImgSrc('https://cdn-icons-png.flaticon.com/512/2474/2474161.png')
+        setImgSrc('/shop.png')
       }}
     />
   )
