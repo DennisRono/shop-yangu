@@ -98,9 +98,6 @@ Welcome to **ShopYangu Admin Panel**, a comprehensive and intuitive interface fo
         # backend
         NEXT_PUBLIC_BACKEND_URL=""
 
-        # Jwt
-        TOKEN_SECRET = ""
-
         # database
         DATABASE_URL=""
 
