@@ -1,9 +1,11 @@
 'use client'
-import { useCallback, useEffect } from 'react'
+
+import { useCallback, useEffect, useState } from 'react'
 import { useDropzone, Accept, FileRejection } from 'react-dropzone'
 import { toast } from '@/hooks/use-toast'
 import ImageUpload from '@/lib/ImageUpload'
-import { X } from 'lucide-react'
+import { Loader2, X } from 'lucide-react'
+import { Progress } from '@/components/ui/progress'
 
 interface FileUploadProps {
   images: string[]
@@ -11,6 +13,11 @@ interface FileUploadProps {
   thumbnail: number | null
   setThumbnail: (index: number | null) => void
   userId: string
+}
+
+interface UploadingFile {
+  file: File
+  progress: number
 }
 
 const FileRejectionToast = ({ file, errors }: { file: File; errors: any }) => (
@@ -31,13 +38,22 @@ const FileUpload: React.FC<FileUploadProps> = ({
   setThumbnail,
   userId,
 }) => {
+  const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([])
+
   const onDrop = useCallback(
     async (acceptedFiles: File[], fileRejections: FileRejection[]) => {
       const uploadFiles = async (): Promise<void> => {
         const newPaths: string[] = []
-        for (const file of acceptedFiles) {
+        setUploadingFiles(acceptedFiles.map((file) => ({ file, progress: 0 })))
+
+        for (let i = 0; i < acceptedFiles.length; i++) {
+          const file = acceptedFiles[i]
           try {
-            const url = await ImageUpload(file, userId)
+            const url = await ImageUpload(file, userId, (progress: any) => {
+              setUploadingFiles((prev) =>
+                prev.map((f, index) => (index === i ? { ...f, progress } : f))
+              )
+            })
             if (url) {
               newPaths.push(url)
             }
@@ -54,6 +70,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         if (thumbnail === null && newPaths.length > 0) {
           setThumbnail(images.length)
         }
+        setUploadingFiles([])
       }
 
       await uploadFiles()
@@ -115,6 +132,19 @@ const FileUpload: React.FC<FileUploadProps> = ({
             : 'Drag & drop files here, or click to select files'}
         </p>
       </div>
+      {uploadingFiles.length > 0 && (
+        <div className="space-y-2">
+          {uploadingFiles.map((file, index) => (
+            <div key={index} className="flex items-center space-x-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span className="text-sm text-gray-600 flex-grow truncate">
+                {file.file.name}
+              </span>
+              <Progress value={file.progress} className="w-24" />
+            </div>
+          ))}
+        </div>
+      )}
       {images.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {images.map((file, i) => (

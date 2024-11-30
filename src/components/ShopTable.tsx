@@ -45,11 +45,15 @@ export function ShopTable({
         {shops.map((shop, i) => (
           <TableRow key={shop._id}>
             <TableCell>{i + 1}</TableCell>
-            <TableCell className="overflow-ellipsis line-clamp-3">
-              {shop.name}
+            <TableCell>
+              <span className="overflow-ellipsis line-clamp-3">
+                {shop.name}
+              </span>
             </TableCell>
-            <TableCell className="overflow-ellipsis line-clamp-3">
-              {shop.description}
+            <TableCell>
+              <span className="overflow-ellipsis line-clamp-3">
+                {shop.description}
+              </span>
             </TableCell>
             <TableCell>
               {shop.logo && <CImage logo={shop.logo} name={shop.name} />}

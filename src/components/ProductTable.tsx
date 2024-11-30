@@ -55,11 +55,15 @@ export function ProductTable({
         {products.map((product, i) => (
           <TableRow key={product._id}>
             <TableCell>{i + 1}</TableCell>
-            <TableCell className="overflow-ellipsis line-clamp-3">
-              {product.name}
+            <TableCell>
+              <span className="overflow-ellipsis line-clamp-3">
+                {product?.name || ''}
+              </span>
             </TableCell>
-            <TableCell className="overflow-ellipsis line-clamp-3">
-              {product.description}
+            <TableCell>
+              <span className="overflow-ellipsis line-clamp-3">
+                {product.description}
+              </span>
             </TableCell>
             <TableCell className="whitespace-nowrap">
               Ksh. {product.price}

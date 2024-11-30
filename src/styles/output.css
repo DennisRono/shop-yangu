@@ -766,12 +766,20 @@ body {
   margin-bottom: 1rem;
 }
 
+.-mt-1 {
+  margin-top: -0.25rem;
+}
+
 .mb-4 {
   margin-bottom: 1rem;
 }
 
 .mb-6 {
   margin-bottom: 1.5rem;
+}
+
+.ml-1 {
+  margin-left: 0.25rem;
 }
 
 .ml-auto {
@@ -794,24 +802,11 @@ body {
   margin-top: 1rem;
 }
 
-.mb-2 {
-  margin-bottom: 0.5rem;
-}
-
-.mt-2 {
-  margin-top: 0.5rem;
-}
-
-.-mt-2 {
-  margin-top: -0.5rem;
-}
-
-.ml-1 {
-  margin-left: 0.25rem;
-}
-
-.-mt-1 {
-  margin-top: -0.25rem;
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 
 .flex {
@@ -954,6 +949,10 @@ body {
   width: 5rem;
 }
 
+.w-24 {
+  width: 6rem;
+}
+
 .w-3\.5 {
   width: 0.875rem;
 }
@@ -998,6 +997,10 @@ body {
   width: 150px;
 }
 
+.w-\[200px\] {
+  width: 200px;
+}
+
 .w-\[300px\] {
   width: 300px;
 }
@@ -1008,10 +1011,6 @@ body {
 
 .w-full {
   width: 100%;
-}
-
-.w-\[200px\] {
-  width: 200px;
 }
 
 .min-w-\[200px\] {
@@ -1050,6 +1049,10 @@ body {
   flex-shrink: 0;
 }
 
+.flex-grow {
+  flex-grow: 1;
+}
+
 .caption-bottom {
   caption-side: bottom;
 }
@@ -1061,6 +1064,10 @@ body {
 
 .translate-y-\[-50\%\] {
   --tw-translate-y: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.transform {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
@@ -1244,6 +1251,16 @@ body {
   overflow-x: hidden;
 }
 
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overflow-ellipsis {
+  text-overflow: ellipsis;
+}
+
 .whitespace-nowrap {
   white-space: nowrap;
 }
@@ -1317,6 +1334,11 @@ body {
   border-color: var(--color-border);
 }
 
+.border-black {
+  --tw-border-opacity: 1;
+  border-color: rgb(0 0 0 / var(--tw-border-opacity, 1));
+}
+
 .border-border\/50 {
   border-color: hsl(var(--border) / 0.5);
 }
@@ -1341,11 +1363,6 @@ body {
 .border-red-500 {
   --tw-border-opacity: 1;
   border-color: rgb(239 68 68 / var(--tw-border-opacity, 1));
-}
-
-.border-black {
-  --tw-border-opacity: 1;
-  border-color: rgb(0 0 0 / var(--tw-border-opacity, 1));
 }
 
 .border-l-transparent {
@@ -1432,6 +1449,10 @@ body {
 
 .bg-primary\/10 {
   background-color: hsl(var(--primary) / 0.1);
+}
+
+.bg-primary\/20 {
+  background-color: hsl(var(--primary) / 0.2);
 }
 
 .bg-red-100 {
