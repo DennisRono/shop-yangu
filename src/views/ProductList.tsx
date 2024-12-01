@@ -211,7 +211,7 @@ export default function ProductListingPage() {
             Add New Product
           </Button>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center flex-wrap gap-4">
           <Input
             type="text"
             placeholder="Search products..."
@@ -240,7 +240,7 @@ export default function ProductListingPage() {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-20">
             <h2 className="font-semibold text-sm ml-1">Price Range</h2>
             <input
               type="range"
@@ -260,7 +260,7 @@ export default function ProductListingPage() {
               <span className="text-xs">{filters.priceRange[1]}</span>
             </div>
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-20">
             <h2 className="font-semibold text-sm ml-1">Stock Range</h2>
             <input
               type="range"
@@ -282,6 +282,24 @@ export default function ProductListingPage() {
               <span className="text-xs">{filters.stockRange[1]}</span>
             </div>
           </div>
+          <Button
+            onClick={() =>
+              setFilters({
+                shop: 'all',
+                priceRange: findMinAndMax(
+                  products.map((prod: any) => parseInt(prod.price))
+                ),
+                stockRange: findMinAndMax(
+                  products.map((prod: any) => parseInt(prod.stock_level))
+                ),
+                search: '',
+              })
+            }
+            className="mb-4 md:mb-0 !cursor-pointer"
+            disabled={filters.search === '' && filters.shop === 'all'}
+          >
+            Clear Filters
+          </Button>
         </div>
       </div>
       {loading ? (

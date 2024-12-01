@@ -52,7 +52,7 @@ export function ProductTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {products.map((product, i) => (
+        {products.map((product: Product, i) => (
           <TableRow key={product._id}>
             <TableCell>{i + 1}</TableCell>
             <TableCell>
