@@ -1,4 +1,5 @@
-import React from 'react'
+'use client'
+import React, { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { setTab } from '@/store/slices/tabSlice'
 import {
@@ -17,7 +18,17 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ expanded, setExpanded }) => {
   const playtab = useAppSelector((state: any) => state.tab).tab
+  const [isVisible, setIsVisible] = useState(false)
   const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    if (expanded) {
+      setIsVisible(true)
+    } else {
+      const timer = setTimeout(() => setIsVisible(false), 300)
+      return () => clearTimeout(timer)
+    }
+  }, [expanded])
 
   const menuItems = [
     { name: 'Dashboard', icon: Home, key: 'dashboard' },
@@ -28,8 +39,10 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded, setExpanded }) => {
   return (
     <aside
       className={cn(
-        'bg-gray-900 text-gray-100 flex flex-col transition-all duration-300',
-        expanded ? 'w-64' : 'w-20'
+        'bg-gray-900 text-gray-100 flex flex-col transition-all duration-300 ease-in-out',
+        expanded
+          ? 'absolute w-full h-screen z-50 md:!relative md:w-64'
+          : 'block w-0 md:w-20'
       )}
     >
       <div className="p-4 flex items-center justify-between">

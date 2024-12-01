@@ -688,6 +688,14 @@ body {
   pointer-events: auto;
 }
 
+.visible {
+  visibility: visible;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
 .fixed {
   position: fixed;
 }
@@ -798,6 +806,10 @@ body {
   z-index: 100;
 }
 
+.z-\[49\] {
+  z-index: 49;
+}
+
 .-mx-1 {
   margin-left: -0.25rem;
   margin-right: -0.25rem;
@@ -879,6 +891,14 @@ body {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
+}
+
+.\!block {
+  display: block !important;
+}
+
+.block {
+  display: block;
 }
 
 .flex {
@@ -996,6 +1016,10 @@ body {
 
 .h-svh {
   height: 100svh;
+}
+
+.h-screen {
+  height: 100vh;
 }
 
 .max-h-96 {
@@ -1997,6 +2021,10 @@ body {
   opacity: 0.9;
 }
 
+.opacity-100 {
+  opacity: 1;
+}
+
 .shadow {
   --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
@@ -2935,12 +2963,24 @@ body {
 }
 
 @media (min-width: 768px) {
+  .md\:\!relative {
+    position: relative !important;
+  }
+
+  .md\:relative {
+    position: relative;
+  }
+
   .md\:mb-0 {
     margin-bottom: 0px;
   }
 
   .md\:block {
     display: block;
+  }
+
+  .md\:\!block {
+    display: block !important;
   }
 
   .md\:flex {
@@ -2953,6 +2993,10 @@ body {
 
   .md\:w-64 {
     width: 16rem;
+  }
+
+  .md\:w-20 {
+    width: 5rem;
   }
 
   .md\:max-w-\[420px\] {

@@ -18,7 +18,10 @@ export default function DashboardPage() {
           />
           <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
             <div className="h-full w-full">
-              <Header />
+              <Header
+                expanded={sidebarExpanded}
+                setExpanded={setSidebarExpanded}
+              />
               <Playarea />
             </div>
           </main>

@@ -15,11 +15,16 @@ import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useTheme } from '@/lib/theme-provider'
 
-const Header = () => {
+interface SidebarProps {
+  expanded: boolean
+  setExpanded: (expanded: boolean) => void
+}
+
+const Header: React.FC<SidebarProps> = ({ expanded, setExpanded }) => {
   const { theme, toggleTheme } = useTheme()
 
   return (
-    <header className="h-14 sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:bg-black">
+    <header className="h-14 sticky top-0 z-[49] w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:bg-black">
       <div className="flex h-14 items-center justify-between mx-4">
         <div className="flex items-center space-x-4">
           <Link href="/" className="flex items-center space-x-2">
@@ -27,21 +32,18 @@ const Header = () => {
               ShopYangu
             </span>
           </Link>
-          <Button variant="outline" size="icon" className="md:hidden">
+          <Button
+            variant="outline"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setExpanded(!expanded)}
+          >
             <Menu className="h-5 w-5" />
             <span className="sr-only">Toggle Menu</span>
           </Button>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">
-          <form className="hidden flex-1 md:block">
-            <div className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search products..."
-                className="pl-8 w-[300px]"
-              />
-            </div>
-          </form>
+          <div></div>
           <Button
             variant="ghost"
             size="icon"
