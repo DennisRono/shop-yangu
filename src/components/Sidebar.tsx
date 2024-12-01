@@ -20,6 +20,14 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded, setExpanded }) => {
   const playtab = useAppSelector((state: any) => state.tab).tab
   const [isVisible, setIsVisible] = useState(false)
   const dispatch = useAppDispatch()
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   useEffect(() => {
     if (expanded) {
@@ -30,11 +38,21 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded, setExpanded }) => {
     }
   }, [expanded])
 
+  useEffect(() => {
+    if (isMobile) {
+      setExpanded(false)
+    }
+  }, [playtab, isMobile, setExpanded])
+
   const menuItems = [
     { name: 'Dashboard', icon: Home, key: 'dashboard' },
     { name: 'Shops', icon: Store, key: 'shops' },
     { name: 'Products', icon: ShoppingBag, key: 'products' },
   ]
+
+  const handleTabChange = (key: string) => {
+    dispatch(setTab({ tab: key }))
+  }
 
   return (
     <aside
@@ -57,7 +75,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded, setExpanded }) => {
         <button
           onClick={() => setExpanded(!expanded)}
           className={
-            ' mx-auto p-1.5 rounded-lg bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+            'mx-auto p-1.5 rounded-lg bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
           }
         >
           {expanded ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
@@ -75,7 +93,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded, setExpanded }) => {
                     : 'text-gray-300 hover:bg-gray-800 hover:text-white',
                   !expanded && 'justify-center'
                 )}
-                onClick={() => dispatch(setTab({ tab: item.key }))}
+                onClick={() => handleTabChange(item.key)}
                 aria-current={playtab === item.key ? 'page' : undefined}
               >
                 <item.icon
