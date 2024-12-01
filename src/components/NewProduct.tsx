@@ -101,7 +101,10 @@ const NewProduct: React.FC<NewProductProps> = ({ onClose }) => {
     formik
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-h-[80vh]">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 max-h-[80vh] overflow-y-auto scrollbar-none scrollbar-thumb-gray-900 scrollbar-track-transparent px-1"
+    >
       <div>
         <Label htmlFor="shop_id">Shop</Label>
         <Select

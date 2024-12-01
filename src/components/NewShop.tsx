@@ -57,7 +57,10 @@ const NewShop = ({ onClose }: { onClose: (value: any) => void }) => {
   console.log(values)
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4  max-h-[80vh]">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4  max-h-[80vh] overflow-y-auto scrollbar-none scrollbar-thumb-gray-900 scrollbar-track-transparent px-1"
+    >
       <div>
         <Label htmlFor="shopName">Shop Name</Label>
         <Input
