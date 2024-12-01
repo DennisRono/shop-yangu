@@ -57,7 +57,7 @@ const NewShop = ({ onClose }: { onClose: (value: any) => void }) => {
   console.log(values)
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4  max-h-[80vh]">
       <div>
         <Label htmlFor="shopName">Shop Name</Label>
         <Input

@@ -101,7 +101,7 @@ const NewProduct: React.FC<NewProductProps> = ({ onClose }) => {
     formik
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 max-h-[80vh]">
       <div>
         <Label htmlFor="shop_id">Shop</Label>
         <Select
@@ -141,37 +141,39 @@ const NewProduct: React.FC<NewProductProps> = ({ onClose }) => {
           <p className="text-red-500 text-sm mt-1">{errors.name}</p>
         )}
       </div>
-      <div>
-        <Label htmlFor="price">Price</Label>
-        <Input
-          id="price"
-          name="price"
-          value={values.price}
-          onChange={handleChange}
-          placeholder="e.g., 5000"
-          type="number"
-          className={errors.price && touched.price ? 'border-red-500' : ''}
-        />
-        {touched.price && errors.price && (
-          <p className="text-red-500 text-sm mt-1">{errors.price}</p>
-        )}
-      </div>
-      <div>
-        <Label htmlFor="stock_level">Stock Level</Label>
-        <Input
-          id="stock_level"
-          name="stock_level"
-          value={values.stock_level}
-          onChange={handleChange}
-          placeholder="e.g., 10"
-          type="number"
-          className={
-            errors.stock_level && touched.stock_level ? 'border-red-500' : ''
-          }
-        />
-        {touched.stock_level && errors.stock_level && (
-          <p className="text-red-500 text-sm mt-1">{errors.stock_level}</p>
-        )}
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex-1">
+          <Label htmlFor="price">Price</Label>
+          <Input
+            id="price"
+            name="price"
+            value={values.price}
+            onChange={handleChange}
+            placeholder="e.g., 5000"
+            type="number"
+            className={errors.price && touched.price ? 'border-red-500' : ''}
+          />
+          {touched.price && errors.price && (
+            <p className="text-red-500 text-sm mt-1">{errors.price}</p>
+          )}
+        </div>
+        <div className="flex-1">
+          <Label htmlFor="stock_level">Stock Level</Label>
+          <Input
+            id="stock_level"
+            name="stock_level"
+            value={values.stock_level}
+            onChange={handleChange}
+            placeholder="e.g., 10"
+            type="number"
+            className={
+              errors.stock_level && touched.stock_level ? 'border-red-500' : ''
+            }
+          />
+          {touched.stock_level && errors.stock_level && (
+            <p className="text-red-500 text-sm mt-1">{errors.stock_level}</p>
+          )}
+        </div>
       </div>
       <div>
         <Label htmlFor="description">Description</Label>
