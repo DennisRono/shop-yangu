@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Shop } from '@/interfaces'
 import { Loader2 } from 'lucide-react'
+import FileUpload from './FileUpload'
+import { useAppSelector } from '@/store/hooks'
 
 interface UpdateShopFormProps {
   shop: Shop
@@ -27,6 +29,7 @@ export function UpdateShopForm({
   onSubmit,
 }: UpdateShopFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const user = useAppSelector((state: any) => state.identity.user)
 
   const formik = useFormik({
     initialValues: {
@@ -82,16 +85,16 @@ export function UpdateShopForm({
         )}
       </div>
       <div>
-        <Label htmlFor="logo">Logo URL</Label>
-        <Input
-          id="logo"
-          name="logo"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.logo}
+        <Label>Shop Logo</Label>
+        <FileUpload
+          images={[formik.values.logo]}
+          setImages={(images) => formik.setFieldValue('logo', images)}
+          thumbnail={0}
+          setThumbnail={(index) => {}}
+          userId={user.user_id}
         />
         {formik.touched.logo && formik.errors.logo && (
-          <div className="text-red-500">{formik.errors.logo}</div>
+          <div className="text-red-500 text-sm mt-1">{formik.errors.logo}</div>
         )}
       </div>
       <div className="flex justify-end space-x-2">
