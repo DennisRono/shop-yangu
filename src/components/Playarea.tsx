@@ -7,6 +7,7 @@ import OverviewMetrics from '@/views/OverviewMetrics'
 import SearchFilter from '@/views/SearchFilter'
 import StockStatus from '@/views/StockStatus'
 import TopShops from '@/views/TopShops'
+import Notifications from '@/views/Notifications'
 
 const Playarea = () => {
   const playtab = useAppSelector((state: any) => state.tab).tab
@@ -26,6 +27,8 @@ const Playarea = () => {
         return <StockStatus />
       case 'top-shops':
         return <TopShops />
+      case 'notifications':
+        return <Notifications />
       default:
         return <Dash />
     }
