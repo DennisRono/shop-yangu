@@ -5,6 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { api } from '@/lib/api'
 import { useToast } from '@/hooks/use-toast'
 import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  Building2,
+  DollarSign,
+  Package,
+  ShoppingBag,
+} from 'lucide-react'
+import {
   Bar,
   BarChart,
   Line,
@@ -30,15 +38,22 @@ import {
 } from '@/components/ui/table'
 import { Skeleton } from '@/components/ui/skeleton'
 
+interface Metrics {
+  totalShops: number
+  totalProducts: number
+  totalStock: number
+  totalValue: number
+}
+
+interface ApiResponse {
+  current: Metrics
+  previous: Metrics
+  stockDistribution: { status: string; count: number }[]
+  topShops: { shopName: string; totalStock: number }[]
+}
+
 const Dash = () => {
-  const [metrics, setMetrics] = useState({
-    totalShops: 0,
-    totalProducts: 0,
-    totalStock: 0,
-    totalValue: 0,
-    stockDistribution: [],
-    topShops: [],
-  })
+  const [metrics, setMetrics] = useState<ApiResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const { toast } = useToast()
 
@@ -75,49 +90,85 @@ const Dash = () => {
     }).format(amount)
   }
 
-  if (loading) {
+  const getPercentageChange = (current: number, previous: number) => {
+    if (previous === 0) return 100
+    return ((current - previous) / previous) * 100
+  }
+
+  if (loading || !metrics) {
     return <DashLoader />
   }
 
+  const metricData = [
+    {
+      title: 'Total Shops',
+      value: metrics.current.totalShops,
+      previousValue: metrics.previous.totalShops,
+      icon: Building2,
+    },
+    {
+      title: 'Total Products',
+      value: metrics.current.totalProducts,
+      previousValue: metrics.previous.totalProducts,
+      icon: Package,
+    },
+    {
+      title: 'Total Value',
+      value: metrics.current.totalValue,
+      previousValue: metrics.previous.totalValue,
+      icon: DollarSign,
+      format,
+    },
+    {
+      title: 'Total Stock',
+      value: metrics.current.totalStock,
+      previousValue: metrics.previous.totalStock,
+      icon: ShoppingBag,
+    },
+  ]
+
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap gap-4">
-        <Card className="flex-1 min-w-[200px]">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Shops</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{metrics.totalShops}</div>
-          </CardContent>
-        </Card>
-        <Card className="flex-1 min-w-[200px]">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Products
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{metrics.totalProducts}</div>
-          </CardContent>
-        </Card>
-        <Card className="flex-1 min-w-[200px]">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Value</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {format(metrics.totalValue)}
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="flex-1 min-w-[200px]">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Stock</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{metrics.totalStock}</div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {metricData.map((metric, index) => (
+          <Card key={index}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                {metric.title}
+              </CardTitle>
+              <metric.icon className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {metric.format ? metric.format(metric.value) : metric.value}
+              </div>
+              {(() => {
+                const percentageChange = getPercentageChange(
+                  metric.value,
+                  metric.previousValue
+                )
+                const isPositive = percentageChange > 0
+                return (
+                  <p
+                    className={`flex items-center text-xs ${
+                      isPositive ? 'text-green-600' : 'text-red-600'
+                    }`}
+                  >
+                    {isPositive ? (
+                      <ArrowUpIcon className="h-4 w-4 mr-1" />
+                    ) : (
+                      <ArrowDownIcon className="h-4 w-4 mr-1" />
+                    )}
+                    {Math.abs(percentageChange).toFixed(0)}%
+                    <span className="text-muted-foreground ml-1">
+                      from last period
+                    </span>
+                  </p>
+                )
+              })()}
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       <div className="flex flex-wrap gap-4 my-4 w-full">
@@ -197,7 +248,7 @@ const Dash = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {metrics.topShops.map((shop: any, index) => (
+              {metrics.topShops.map((shop, index) => (
                 <TableRow key={index}>
                   <TableCell>{shop.shopName}</TableCell>
                   <TableCell>{shop.totalStock}</TableCell>
@@ -215,16 +266,17 @@ export default Dash
 
 const DashLoader = () => (
   <div className="space-y-8">
-    <div className="flex flex-wrap gap-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {Array(4)
         .fill(0)
         .map((_, index) => (
-          <Card key={index} className="flex-1 min-w-[200px]">
+          <Card key={index}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <Skeleton className="h-4 w-[100px]" />
             </CardHeader>
             <CardContent>
               <Skeleton className="h-8 w-[80px]" />
+              <Skeleton className="h-4 w-[120px] mt-2" />
             </CardContent>
           </Card>
         ))}
