@@ -14,6 +14,8 @@ import {
 import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useTheme } from '@/lib/theme-provider'
+import { useAppDispatch } from '@/store/hooks'
+import { setTab } from '@/store/slices/tabSlice'
 
 interface SidebarProps {
   expanded: boolean
@@ -22,6 +24,8 @@ interface SidebarProps {
 
 const Header: React.FC<SidebarProps> = ({ expanded, setExpanded }) => {
   const { theme, toggleTheme } = useTheme()
+
+  const dispatch = useAppDispatch()
 
   return (
     <header className="h-14 sticky top-0 z-[49] w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:bg-black">
@@ -49,6 +53,9 @@ const Header: React.FC<SidebarProps> = ({ expanded, setExpanded }) => {
             size="icon"
             className="mr-2"
             aria-label="Notifications"
+            onClick={() => {
+              dispatch(setTab({ tab: 'notifications' }))
+            }}
           >
             <Bell className="h-4 w-4" />
             <span className="sr-only">Notifications</span>

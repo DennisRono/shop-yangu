@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Filter } from 'lucide-react'
 
 export default function ProductListingPage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -283,6 +284,7 @@ export default function ProductListingPage() {
             </div>
           </div>
           <Button
+            variant="outline"
             onClick={() =>
               setFilters({
                 shop: 'all',
@@ -295,10 +297,9 @@ export default function ProductListingPage() {
                 search: '',
               })
             }
-            className="mb-4 md:mb-0 !cursor-pointer"
             disabled={filters.search === '' && filters.shop === 'all'}
           >
-            Clear Filters
+            <Filter className="mr-2 h-4 w-4" /> Clear Filters
           </Button>
         </div>
       </div>
